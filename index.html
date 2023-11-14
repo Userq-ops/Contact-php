@@ -1,52 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        * {
-            margin-bottom: 10px 0;
-            padding-left: 2px;
-            margin: 5px;
-            font-size: 20px;
-            font-family: sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    /* App.css */
 
-        footer {
-            position: fixed;
-            bottom: 0; 
-            left: 0; 
-            width: 100%;  
-            padding: 10px; 
-        }
+.calculator {
+  width: 320px;
+  margin: auto;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f8f8f8;
+}
 
+.display {
+  font-size: 2em;
+  margin-bottom: 10px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-    </style>
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+}
+
+button {
+  padding: 15px;
+  font-size: 1.5em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+
+button.operator {
+  color: #fff;
+  background-color: #f76c6c;
+}
+
+button.operator:hover {
+  background-color: #d84c4c;
+}
+
+button.double {
+  grid-column: span 2;
+}
+
+button.equals {
+  color: #fff;
+  background-color: #52c41a;
+}
+
+button.equals:hover {
+  background-color: #41a61e;
+}
+
+  </style>
 </head>
-<body background="https://i.pinimg.com/originals/f9/99/dc/f999dcb3e600f7b0024e3ec91635bf02.jpg">     
-    <center>
-        <ul>
-            <a href="https://userq-ops.github.io/Glavnyi-php/">Главное</a>
-            <a href="https://userq-ops.github.io/Education-php/">Образование</a>
-            <a href="https://userq-ops.github.io/Opyt-php/">Опыт работы</a>
-            <a href="https://userq-ops.github.io/Achivment-php/">Достижения</a>
-            <a href="https://userq-ops.github.io/Contact-php/">Контакты</a>
-        </ul>
-    </center>
-    <h2>Контакты</h2>
-    <p>Свяжитесь со мной, заполнив форму ниже:</p>
-    <form action="send_email.php" method="post">
-        <fieldset style="margin-bottom: 10px;">
-        <label for="name">Имя:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <label for="message">Сообщение:</label>
-        <textarea id="message" name="message" required></textarea>
-        <button type="submit">Отправить</button>
-    <footer style="font-size: 20px;">
-        <p>&copy; 2023 Лионель Рональдинио</p>
-    </footer>
+
+<body style="background-color: yellow;"> 
+  <div class="calculator">
+    <div class="display">0</div>
+    <div class="buttons">
+      <button onclick="handleButtonClick('7')">7</button>
+      <button onclick="handleButtonClick('8')">8</button>
+      <button onclick="handleButtonClick('9')">9</button>
+      <button onclick="handleButtonClick('/')">/</button>
+      <button onclick="handleButtonClick('4')">4</button>
+      <button onclick="handleButtonClick('5')">5</button>
+      <button onclick="handleButtonClick('6')">6</button>
+      <button onclick="handleButtonClick('X')">X</button>
+      <button onclick="handleButtonClick('1')">1</button>
+      <button onclick="handleButtonClick('2')">2</button>
+      <button onclick="handleButtonClick('3')">3</button>
+      <button onclick="handleButtonClick('-')">-</button>
+      <button onclick="handleButtonClick('0')">0</button>
+      <button onclick="handleButtonClick('.')">.</button>
+      <button onclick="handleButtonClick('=')">=</button>
+      <button onclick="handleButtonClick('+')">+</button>
+      <button onclick="handleButtonClick('C')">C</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let display = document.querySelector('.display');
+      let operator = null;
+      let prevValue = null;
+  
+      function handleButtonClick(value) {
+        if (value === 'C') {
+          display.innerText = '0';
+          operator = null;
+          prevValue = null;
+        } else if (value === '=') {
+          if (operator && prevValue !== null) {
+            const currentResult = calculate(parseFloat(prevValue), parseFloat(display.innerText), operator);
+            display.innerText = currentResult.toString();
+            operator = null;
+            prevValue = null;
+          }
+        } else if (isNumber(value)) {
+          display.innerText = (display.innerText === '0' ? value : display.innerText + value);
+        } else {
+          if (operator && prevValue !== null) {
+            const currentResult = calculate(parseFloat(prevValue), parseFloat(display.innerText), operator);
+            display.innerText = currentResult.toString();
+            operator = value;
+            prevValue = currentResult;
+          } else {
+            operator = value;
+            prevValue = display.innerText;
+            display.innerText = '0';
+          }
+        }
+      }
+  
+      function isNumber(value) {
+        return !isNaN(value) || value === '.';
+      }
+  
+      function calculate(prevValue, currentValue, operator) {
+        switch (operator) {
+          case '+':
+            return prevValue + currentValue;
+          case '-':
+            return prevValue - currentValue;
+          case 'X':
+            return prevValue * currentValue;
+          case '/':
+            return prevValue / currentValue;
+          default:
+            return currentValue;
+        }
+      }
+  
+      const buttons = document.querySelectorAll('.buttons button');
+      buttons.forEach(button => {
+        button.addEventListener('click', function () {
+          handleButtonClick(this.innerText);
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
